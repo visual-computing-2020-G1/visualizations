@@ -19,7 +19,7 @@ const Routes = () => {
   };
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={process.env.PUBLIC_URL}>
       <Layout>
         <Sider collapsed={collapsed} />
         <Layout className="site-layout">

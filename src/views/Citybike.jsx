@@ -40,6 +40,11 @@ const Citibike = () => {
   }
   return (
     <div>
+      <ul>
+        <li>
+          Para resetear el grafico de barras se debe dar click en un espacio en blanco en el grafico de promedio por día de la semana.
+        </li>
+      </ul>
       <Row gutter={[15, 15]}>
         <Col span="12">
           <Rose data={average} filter={filterAmmout} />
