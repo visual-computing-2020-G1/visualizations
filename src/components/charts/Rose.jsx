@@ -18,9 +18,10 @@ const Rose = ({ data, filter }) => {
           data={data}
           forceFit
           onClick={(e) => filter(e)}
+          // onMouseDown={e => console.log(e)}
         >
           <Coordinate type="polar" />
-          <Axis visible={false} />
+          <Axis visible={true} />
           <Tooltip showTitle={false} />
           <Interval
             position="name*value"

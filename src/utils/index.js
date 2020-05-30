@@ -1,4 +1,5 @@
-function getAmmountByDay(data) {
+export function getAmmountByDay(data) {
+  //All .json
   let dictDay = {};
   let results = [];
   data.forEach((record) => {
@@ -21,7 +22,7 @@ function getAmmountByDay(data) {
   return results;
 }
 
-function avergayByDayOfWeek(data) {
+export function avergayByDayOfWeek(data) {
   /**
    * data = [{value:100, day: 1, type:10}]
    */
@@ -60,4 +61,104 @@ function avergayByDayOfWeek(data) {
   }
   return result;
 }
-export { getAmmountByDay, avergayByDayOfWeek };
+export function getPlaces(data) {
+  /*
+  @data: array of all data
+  */
+  let places = {};
+  let lines = [];
+  let dictEdges = {};
+  data.forEach((record) => {
+    const place = record["start station name"];
+    if (places[place] === undefined) {
+      const coord = {
+        lat: record["start station latitude"],
+        long: record["start station longitude"],
+      };
+      places[place] = { coord: { ...coord }, input: 1, output: 0 };
+    } else {
+      places[place] = { ...places[place], input: places[place].input + 1 };
+    }
+  });
+  data.forEach((record) => {
+    const place = record["end station name"];
+    if (places[place] === undefined) {
+      const coord = {
+        lat: record["end station latitude"],
+        long: record["end station longitude"],
+      };
+      places[place] = { coord: { ...coord }, output: 1, input: 0 };
+    } else {
+      places[place] = { ...places[place], output: places[place].output + 1 };
+    }
+  });
+
+  data.forEach((record) => {
+    //pairvalues count
+    const nameStart = record["start station name"];
+    const nameEnd = record["end station name"];
+    const startCoord = {
+      lat: record["start station latitude"],
+      long: record["start station longitude"],
+    };
+    const endCoord = {
+      lat: record["end station latitude"],
+      long: record["end station longitude"],
+    };
+    const name0 = `${nameStart}|${nameEnd}`;
+    if (dictEdges[name0] === undefined) {
+      dictEdges[name0] = {
+        value: 1,
+        startCoord: startCoord,
+        endCoord: endCoord,
+        checked: false,
+      };
+    } else {
+      dictEdges[name0] = {
+        ...dictEdges[name0],
+        value: dictEdges[name0].value + 1,
+      };
+    }
+  });
+  console.log("dictEdges", dictEdges);
+  let edges = [];
+  for (let nameObj in dictEdges) {
+    const names = nameObj.split("|");
+    const startCoord = dictEdges[`${names[0]}|${names[1]}`].startCoord;
+    const endCoord = dictEdges[`${names[0]}|${names[1]}`].endCoord;
+    const startValue = dictEdges[`${names[0]}|${names[1]}`].value;
+    const endValue =
+      dictEdges[`${names[1]}|${names[0]}`] === undefined
+        ? 0
+        : dictEdges[`${names[1]}|${names[0]}`].value;
+    edges.push({
+      coord: [
+        [startCoord.long, startCoord.lat],
+        [endCoord.long, endCoord.lat],
+      ],
+      startName: names[0],
+      endName: names[1],
+      startToEnd: startValue,
+      endToStart: endValue,
+    });
+  }
+  console.log("edges", edges);
+  let placeArray = [];
+  let i = 0;
+  for (let namePlace in places) {
+    const lat = places[namePlace].coord.lat;
+    const long = places[namePlace].coord.long;
+    const input = places[namePlace].input;
+    const output = places[namePlace].output;
+    placeArray.push({
+      name: namePlace,
+      key: i,
+      centroid: [long * 1, lat * 1],
+      input: input,
+      output: output,
+    });
+    i++;
+  }
+  return {placeArray, edges};
+}
+// export { getAmmountByDay, avergayByDayOfWeek };

@@ -2,7 +2,7 @@ import React from "react";
 
 import { Card } from "antd";
 
-import { Chart, Geom, Axis, Legend } from "bizcharts";
+import { Chart, Geom, Axis, Legend, Interval } from "bizcharts";
 
 const scale = {};
 const colors = [
@@ -25,13 +25,19 @@ const Bar = ({ data, day }) => {
   return (
     <Card size="small" title={`cantidad de recorridos por día-${day}`}>
       {mounted && (
-        <Chart data={data} scale={scale} height={400} padding={30} forceFit>
+        <Chart
+          data={data}
+          scale={scale}
+          height={400}
+          padding={30}
+          forceFit
+        >
           {/* <Axis name="value" /> */}
           <Axis name="day" />
           <Geom
+          element-highlight
             type="interval"
             position="day*value"
-            // color={["type", "#E6F6C8-#3376CB"]}
             color={[
               "type",
               (type) => {
