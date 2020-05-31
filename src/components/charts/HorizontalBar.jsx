@@ -37,30 +37,11 @@ const exampleData = [
 class Stacked extends React.Component {
   render() {
     const ds = new DataSet();
-    function formatArray(data, currentStation) {
-      let newData = [];
-      data.forEach((obj) => {
-        const objCp = { ...obj };
-        delete objCp.coord;
-        obj.startName === currentStation
-          ? newData.push(objCp)
-          : newData.push({
-              startName: obj.endName,
-              endName: obj.startName,
-              endToStart: obj.startToEnd,
-              startToEnd: obj.endToStart,
-            });
-      });
-      console.log("newData", newData);
-      return newData;
-    }
-    console.log(this.props.data)
+  
     const dv = ds
       .createView()
-      .source(formatArray(this.props.data, this.props.currentStation));
+      .source(this.props.data);
     //   .source(formatArray(this.props.data, this.props.currentStation));
-    console.log("currents..." , formatArray(this.props.data, this.props.currentStation));
-
     dv.transform({
       type: "sort",
       callback(a, b) {
@@ -79,7 +60,8 @@ class Stacked extends React.Component {
     return (
       <div>
         {dt.length > 0 && (
-          <Chart height={600} data={dv.rows} autoFit>
+          <Chart height={300} data={dv.rows} autoFit >
+             <Tooltip shared />
             <Coordinate transpose />
             <Axis
               name="endName"
@@ -88,9 +70,16 @@ class Stacked extends React.Component {
               }}
             />
             <Interval
-              adjust={[{ type: "stack" }]}
+            //   adjust={[{ type: "stack" }]}
               position="endName*valor"
               color={"key"}
+              adjust={[
+                {
+                  type: "dodge",
+                  marginRatio: 1 / 32
+                }
+              ]}
+  
             />
           </Chart>
         )}

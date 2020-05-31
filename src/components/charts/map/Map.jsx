@@ -40,14 +40,28 @@ const MapScene = React.memo(function Map({
   lines,
   edgeFilterProp,
   setCurrentStation,
+  searchedStation,
 }) {
   // console.log(places);
   const [popupInfoLine, setPopupInfoLine] = React.useState();
   const [popupInfo, setPopupInfo] = React.useState();
   const [filterLine, setFilterLine] = React.useState("");
   const [allLines, setAllLines] = React.useState(true);
+  const [layer, setLayer] = React.useState();
+  const [scene, setScene] = React.useState();
+  // console.log("places:" , places)
 
   React.useEffect(() => {
+    if (layer !== undefined) {
+      console.log("searchstation", searchedStation);
+       layer.setSelect(searchedStation);
+       const coord =  layer.getEncodedData()[searchedStation].coordinates
+      //  console.log("encoded" , layer.getEncodedData())
+       scene.setZoomAndCenter(15, coord);
+    }
+  }, [searchedStation]);
+  React.useEffect(() => {
+    //accion cuando se le da click a un nodo
     setCurrentStation(filterLine);
     edgeFilterProp(
       lines.filter(
@@ -142,13 +156,31 @@ const MapScene = React.memo(function Map({
           },
         }}
         size={{
-          values: 1.2,
+          field: "startToEnd*endToStart",
+          values: (start, end) => {
+            const total = start + end;
+            return total > 50
+              ? 6
+              : total >= 40
+              ? 4.5
+              : total >= 30
+              ? 3.5
+              : total >= 20
+              ? 2.5
+              : total >= 10
+              ? 1.5
+              : 0.7;
+          },
         }}
         color={{
           field: "startToEnd*endToStart",
           values: (start, end) => {
             const total = start + end;
-            return total > 50
+            return total > 300
+              ? "#EAF205"
+              : total >= 100
+              ? "#04D94F"
+              : total >= 50
               ? "#914BF2"
               : total >= 40
               ? "#4BB2F2"
@@ -157,7 +189,7 @@ const MapScene = React.memo(function Map({
               : total >= 20
               ? "#3C474B"
               : total >= 10
-              ? "#162521"
+              ? "#F2059F"
               : "#f5f5f5";
           },
 
@@ -181,6 +213,11 @@ const MapScene = React.memo(function Map({
       </LineLayer>
       {/* <PointLayer/> */}
       <PointLayer
+        onLayerLoaded={(layer, scene) => {
+          setLayer(layer);
+          setScene(scene)
+          // scene.setZoomAndCenter(, )
+        }}
         key={"3"}
         options={{
           autoFit: true,
@@ -200,7 +237,7 @@ const MapScene = React.memo(function Map({
           },
         }}
         color={{
-          field: "output",
+          field: "output*name",
           values: (val) => {
             return val > 1000
               ? "#AD2310"
@@ -220,22 +257,33 @@ const MapScene = React.memo(function Map({
         }}
         active={{
           option: {
-            color: "#0c2c84",
+            color: "#F2E74B",
           },
         }}
         size={{
           field: "input",
-          values: [10, 25],
+          values: [5, 10],
         }}
-        animate={{
-          enable: false,
+        select={{
+          option: {
+            color: "#F2E74B",
+          },
         }}
         style={{
           opacity: 0.8,
         }}
       >
-        {/* <LayerEvent type="click" handler={e => console.log(e)} /> */}
         <LayerEvent type="click" handler={(e) => showPopup(e)} />
+        {/* <LayerEvent
+          type="mousemove"
+          handler={(e) =>
+            e.feature &&
+            setPopupInfo({
+              lnglat: e.lngLat,
+              feature: e.feature,
+            })
+          }
+        /> */}
       </PointLayer>
 
       {/* <LayerEvent type="click" handler={(e) => alert("hey")} /> */}

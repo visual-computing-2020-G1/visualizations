@@ -68,6 +68,8 @@ export function getPlaces(data) {
   let places = {};
   let lines = [];
   let dictEdges = {};
+
+  //for all places
   data.forEach((record) => {
     const place = record["start station name"];
     if (places[place] === undefined) {
@@ -97,6 +99,7 @@ export function getPlaces(data) {
     //pairvalues count
     const nameStart = record["start station name"];
     const nameEnd = record["end station name"];
+    const tripduration = parseInt(record["tripduration"]);
     const startCoord = {
       lat: record["start station latitude"],
       long: record["start station longitude"],
@@ -111,26 +114,48 @@ export function getPlaces(data) {
         value: 1,
         startCoord: startCoord,
         endCoord: endCoord,
-        checked: false,
+        tripduration: tripduration,
       };
     } else {
       dictEdges[name0] = {
         ...dictEdges[name0],
         value: dictEdges[name0].value + 1,
+        tripduration: dictEdges[name0].tripduration + tripduration,
       };
     }
   });
-  console.log("dictEdges", dictEdges);
+  // console.log("dictEdges", dictEdges);
+  // data.forEach( record =>{
+  //   const nameStart = record["start station name"];
+  //   const nameEnd = record["end station name"];
+  //   const name0 = `${nameStart}|${nameEnd}`;
+  //   const tripduration = parseInt(record["tripduration"])
+  //   const totalTripDuration = dictEdges[`${nameStart}|${nameEnd}`].tripduration
+  //   const N =dictEdges[`${nameStart}|${nameEnd}`].value
+  //   const media =  totalTripDuration/N
+  //   if(Math.abs(media - tripduration) > 1500){
+  //     places[nameStart].input = places[nameStart].input  -1
+  //     places[nameEnd].output = places[nameEnd].output  -1
+  //     dictEdges[name0].value = dictEdges[name0].value -1
+  //     dictEdges[name0].tripduration  = dictEdges[name0].tripduration - tripduration
+  //   }
+  // })
+
   let edges = [];
   for (let nameObj in dictEdges) {
     const names = nameObj.split("|");
     const startCoord = dictEdges[`${names[0]}|${names[1]}`].startCoord;
     const endCoord = dictEdges[`${names[0]}|${names[1]}`].endCoord;
     const startValue = dictEdges[`${names[0]}|${names[1]}`].value;
+    const startDuration = dictEdges[`${names[0]}|${names[1]}`].tripduration;
     const endValue =
       dictEdges[`${names[1]}|${names[0]}`] === undefined
         ? 0
         : dictEdges[`${names[1]}|${names[0]}`].value;
+    const endDuration =
+      dictEdges[`${names[1]}|${names[0]}`] === undefined
+        ? 0
+        : dictEdges[`${names[1]}|${names[0]}`].tripduration;
     edges.push({
       coord: [
         [startCoord.long, startCoord.lat],
@@ -140,9 +165,11 @@ export function getPlaces(data) {
       endName: names[1],
       startToEnd: startValue,
       endToStart: endValue,
+      startToEndDuration: startDuration,
+      endToStartDuration: endDuration,
     });
   }
-  console.log("edges", edges);
+  // console.log("edges", edges);
   let placeArray = [];
   let i = 0;
   for (let namePlace in places) {
@@ -159,6 +186,72 @@ export function getPlaces(data) {
     });
     i++;
   }
-  return {placeArray, edges};
+  return { placeArray, edges };
+}
+
+export function formatArray(data, currentStation) {
+  //sort by currentstation
+  let newData = [];
+  data.forEach((obj) => {
+    const objCp = { ...obj };
+    delete objCp.coord;
+    obj.startName === currentStation
+      ? newData.push(objCp)
+      : newData.push({
+          startName: obj.endName,
+          endName: obj.startName,
+          endToStart: obj.startToEnd,
+          endToStartDuration: obj.startToEndDuration,
+          startToEnd: obj.endToStart,
+          startToEndDuration: obj.endToStartDuration,
+        });
+  });
+  // console.log("newData", newData);
+  return newData;
+}
+
+export function filterByDay(data, chooseDay) {
+  let filterData = [];
+  data.forEach((record) => {
+    const time = new Date(record.starttime);
+    const day = time.getDate();
+    if (chooseDay === true || parseInt(day) === parseInt(chooseDay)) {
+      filterData.push(record);
+    }
+  });
+  return filterData;
+}
+export function countByAge(data, startStation = true, endStation = true) {
+  let dictAge = {};
+  let arrayAge = [];
+  const currentYear = new Date().getFullYear()
+  data.forEach((record) => {
+    const nameStart = record["start station name"];
+    const nameEnd = record["end station name"];
+    const year = currentYear - parseInt(record["birth year"]);
+    if (
+      dictAge[year] === undefined &&
+      (startStation || nameStart === startStation) &&
+      (endStation || nameEnd === endStation)
+    ) {
+      dictAge[year] = 1;
+    } else {
+      dictAge[year] = 1 + dictAge[year];
+    }
+  });
+  for (let nameObj in dictAge) {
+    arrayAge.push({
+      year: nameObj,
+      value: dictAge[nameObj],
+    });
+  }
+  return arrayAge;
+}
+export function countGender(data) {
+  let male = 0;
+  data.forEach((record) => {
+    if (record.gender === "1") male++;
+  });
+  return { male: male, female: data.length - male };
 }
 // export { getAmmountByDay, avergayByDayOfWeek };

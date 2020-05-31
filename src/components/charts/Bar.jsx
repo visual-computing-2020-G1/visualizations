@@ -14,7 +14,7 @@ const colors = [
   "#74CBED",
   "#9967BD",
 ];
-const Bar = ({ data, day }) => {
+const Bar = ({ data, day, setNumberDay }) => {
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -28,14 +28,20 @@ const Bar = ({ data, day }) => {
         <Chart
           data={data}
           scale={scale}
-          height={400}
+          height={237}
           padding={30}
           forceFit
+          onClick={(e) => {
+            console.log(e)
+            if (e.data !== undefined && e.data !== null && e.data.data.day !== undefined) {
+              setNumberDay(parseInt(e.data.data.day));
+            }
+          }}
         >
           {/* <Axis name="value" /> */}
           <Axis name="day" />
           <Geom
-          element-highlight
+            element-highlight
             type="interval"
             position="day*value"
             color={[
