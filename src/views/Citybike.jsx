@@ -9,7 +9,11 @@ import {
   countGender,
   countByAge,
 } from "../utils";
-import data from "../data/citybike/bike_2020_03-.json";
+// import data from "../data/citybike/bike_2020_03-.json";
+// import data from "../data/citybike/bike_2019_10.json";
+import data0 from "../data/citybike/bike_2019_10.json";
+import data1 from "../data/citybike/bike_2019_11.json";
+import data2 from "../data/citybike/bike_2020_03-.json";
 
 import BarChart from "../components/charts/Bar";
 import SmallChart from "../components/charts/SmallChart";
@@ -31,6 +35,9 @@ const Citibike = () => {
     @edgesFilter:        Variable que contiene los lados una vez se le da click al respectivo nodo (lugar)
     @NumberDay:        Variable que contiene el numero de dia que filtra los registro del mapa
   */
+  const [month, setMonth] = React.useState(0);
+  const [data, setData] = React.useState([]);
+
   const [ammountsByDay, setAmmount] = React.useState(
     ds.createView().source(getAmmountByDay(data))
   );
@@ -50,7 +57,7 @@ const Citibike = () => {
   const [searchedStation, setsearchedStation] = React.useState("");
   const [genders, setGenders] = React.useState(countGender(data));
   const [ages, setAges] = React.useState(countByAge(data));
-
+  
   React.useEffect(() => {
     const newData = filterByDay(data, numberDay);
     // console.log("newdata", newData);
@@ -58,6 +65,19 @@ const Citibike = () => {
     setAges(countByAge(newData));
     setDataMap(getPlaces(newData));
   }, [numberDay]);
+  React.useEffect(() => {
+    if (month === 0) setData(data0);
+    if (month === 1) setData(data1);
+    if (month === 2) setData(data2);
+  }, [month]);
+  React.useEffect(() => {
+    setAverage(avergayByDayOfWeek(getAmmountByDay(data)));
+    setAmmount(ds.createView().source(getAmmountByDay(data)));
+    setGenders(countGender(data));
+    setDataMap(getPlaces(data));
+    setAges(countByAge(data));
+    
+  }, [data]);
 
   function filterAmmout(e) {
     if (e.data === null || e.data === undefined) {
@@ -83,41 +103,65 @@ const Citibike = () => {
       <h3>Instrucciones</h3>
       <ul>
         <li>
-            Usted puede visualizar el promedio por día  de la semana en la primera grafica, usted puede filtrar el grafico de barras si se le da click dentro del grafico de torta
+          Usted puede visualizar el promedio por día de la semana en la primera
+          grafica, usted puede filtrar el grafico de barras si se le da click
+          dentro del grafico de torta
         </li>
         <li>
-          Para restaurar el grafico de barras (cantidad por día) usted debe hacer click en un espacio en blanco en el grafico de promedio por día
+          Para restaurar el grafico de barras (cantidad por día) usted debe
+          hacer click en un espacio en blanco en el grafico de promedio por día
         </li>
         <li>
-          Se puede filtrar la cantidad de mujeres y hombres por día si se le da click en el grafico de barras de cantidad de recorridos, este también filtrará la cantidad de personas por año
+          Se puede filtrar la cantidad de mujeres y hombres por día si se le da
+          click en el grafico de barras de cantidad de recorridos, este también
+          filtrará la cantidad de personas por año
         </li>
         <li>
-          Cuando usteed selecciona un día el mapa mostrará solamente la información acerca de ese día
+          Cuando usteed selecciona un día el mapa mostrará solamente la
+          información acerca de ese día
         </li>
         <li>
-          Es posible encontrar la estación de bicicletas en el mapa con la barra de busqueda
+          Es posible encontrar la estación de bicicletas en el mapa con la barra
+          de busqueda
         </li>
         <li>
-          Cada véz que se da click a un nodo (estación) se podrá ver tres graficos, cantidad de usuarios que entran a la estación (starToEnd), cantidad de usuarios que llegan de otras estaciones(EndToStart)
-          y el tiempo promedio que se demora de estación a estación
+          Cada véz que se da click a un nodo (estación) se podrá ver tres
+          graficos, cantidad de usuarios que entran a la estación (starToEnd),
+          cantidad de usuarios que llegan de otras estaciones(EndToStart) y el
+          tiempo promedio que se demora de estación a estación
         </li>
         <li>
-          Existen algunos datos que tienen el tiempo de viaje muy largo, estos datos pueden provocar que las graficas no se vean correctamente.
+          Existen algunos datos que tienen el tiempo de viaje muy largo, estos
+          datos pueden provocar que las graficas no se vean correctamente.
         </li>
 
-      <h3>To do</h3>
+        {/* <h3>To do</h3>
         <li>
-          To do: Filtrar en la grafica  tripduration las estaciones con un checkbox o algún desplegable
+          To do: Filtrar en la grafica tripduration las estaciones con un
+          checkbox o algún desplegable
         </li>
         <li>
-          Cada vez que se seleccione algún nodo del mapa se debe mostrar la cantidad de usuarios por genero que llegaron a la estación desde otras y que tomaron el servicio desde ahí
-        
+          Cada vez que se seleccione algún nodo del mapa se debe mostrar la
+          cantidad de usuarios por genero que llegaron a la estación desde otras
+          y que tomaron el servicio desde ahí
         </li>
         <li>
-          Cada vez que se seleccione algún nodo del mapa se debe mostrar la cantidad de usuarios por año que llegaron a la estación desde otras y que tomaron el servicio desde ahí
-        
-        </li>
+          Cada vez que se seleccione algún nodo del mapa se debe mostrar la
+          cantidad de usuarios por año que llegaron a la estación desde otras y
+          que tomaron el servicio desde ahí
+        </li> */}
       </ul>
+      <Select style={{ width: "100px" }}  defaultValue={0} onChange={(e) => setMonth(e)}>
+        <Select.Option key={0} value={0}>
+          2019-10
+        </Select.Option>
+        <Select.Option key={1} value={1}>
+          2019-11
+        </Select.Option>
+        <Select.Option key={2} value={2}>
+          2020-03
+        </Select.Option>
+      </Select>
       <Row gutter={[15, 15]}>
         <Col span="7">
           <Rose data={average} filter={filterAmmout} />
@@ -133,18 +177,25 @@ const Citibike = () => {
               />
             </Col>
             <Col span="6">
-              <Card style={{ minHeight: 151 }}>
+              <Card style={{ maxHeight: 96 }}>
                 <Statistic
                   title="Hombres"
                   suffix={` dia: ${numberDay === true ? "todos" : numberDay}`}
                   value={genders.male}
                 />
               </Card>
-              <Card style={{ minHeight: 151 }}>
+              <Card style={{ maxHeight: 96 }}>
                 <Statistic
-                  title="mujeres"
+                  title="Mujeres"
                   suffix={` dia: ${numberDay === true ? "todos" : numberDay}`}
                   value={genders.female}
+                />
+              </Card>
+              <Card style={{ maxHeight: 96 }}>
+                <Statistic
+                  title="Indefinido"
+                  suffix={` dia: ${numberDay === true ? "todos" : numberDay}`}
+                  value={genders.undefined}
                 />
               </Card>
             </Col>
@@ -184,7 +235,7 @@ const Citibike = () => {
               searchedStation={searchedStation}
             />
           </Card>
-          <Card bodyStyle={{ minHeight: 300 }}>
+          <Card title={`Duración de viaje promedio de ${currentStation} y otras estaciones` } bodyStyle={{ minHeight: 300 }}>
             <TripDurationChart
               data={formatArray(edgesFilter, currentStation)}
             />

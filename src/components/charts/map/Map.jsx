@@ -115,8 +115,8 @@ const MapScene = React.memo(function Map({
               margin: 0,
             }}
           >
-            <li>Estación de inicio:{popupInfo.feature.input}</li>
-            <li>Estación final :{popupInfo.feature.output}</li>
+            <li>Parten de aquí:{popupInfo.feature.input}</li>
+            <li>Llegan de otras estaciones:{popupInfo.feature.output}</li>
           </ul>
         </Popup>
       )}

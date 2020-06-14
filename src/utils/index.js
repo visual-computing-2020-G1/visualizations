@@ -249,9 +249,13 @@ export function countByAge(data, startStation = true, endStation = true) {
 }
 export function countGender(data) {
   let male = 0;
+  let female = 0;
+  let und = 0;
   data.forEach((record) => {
-    if (record.gender === "1") male++;
+    if (record.gender === "1" || record.gender === 1  ) male++;
+    if (record.gender === "2" || record.gender === 2  ) female++;
+    if (record.gender === "0" || record.gender === 0  ) und++;
   });
-  return { male: male, female: data.length - male };
+  return { male: male, female: female, undefined: und };
 }
 // export { getAmmountByDay, avergayByDayOfWeek };

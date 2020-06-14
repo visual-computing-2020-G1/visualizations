@@ -133,6 +133,12 @@ const listData = [
     github: "https://github.com/jaleonro",
     email: "jaleonro@unal.edu.co",
   },
+  {
+    name: "Daniel Felipe Leyva",
+    linkedin: "https://www.linkedin.com/",
+    github: "https://github.com/dfleyvad",
+    email: "dfleyvad@unal.edu.co",
+  },
 ];
 const { Title, Text } = Typography;
 
