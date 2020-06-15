@@ -1,3 +1,13 @@
+
+export function deleteLargeTrips(data, minuts = 180 ){
+  let newData = []
+  data.forEach(element =>{
+    if(parseInt(element.tripduration)/60 <  minuts){
+      newData.push(element)
+    } 
+  })
+  return newData
+}
 export function getAmmountByDay(data) {
   //All .json
   let dictDay = {};

@@ -1,6 +1,18 @@
 import React from "react";
-import { Row, Col, Card, Select, Statistic } from "antd";
 import {
+  Row,
+  Col,
+  Card,
+  Select,
+  Statistic,
+  Divider,
+  Upload,
+  Button,
+  message,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import {
+  deleteLargeTrips,
   avergayByDayOfWeek,
   getAmmountByDay,
   getPlaces,
@@ -11,9 +23,7 @@ import {
 } from "../utils";
 // import data from "../data/citybike/bike_2020_03-.json";
 // import data from "../data/citybike/bike_2019_10.json";
-import data0 from "../data/citybike/bike_2019_10.json";
-import data1 from "../data/citybike/bike_2019_11.json";
-import data2 from "../data/citybike/bike_2020_03-.json";
+import data0 from "../data/citybike/bike_2020_03-.json";
 
 import BarChart from "../components/charts/Bar";
 import SmallChart from "../components/charts/SmallChart";
@@ -48,16 +58,16 @@ const Citibike = () => {
   const [currentDay, setCurrentDay] = React.useState("All");
 
   function resetBar() {
-    setAmmount(ds.createView().source(getAmmountByDay(data)));
+    setAmmount(ds.createView().source(getAmmountByDay(deleteLargeTrips(data))));
   }
-  const [dataMap, setDataMap] = React.useState(getPlaces(data));
+  const [dataMap, setDataMap] = React.useState(getPlaces(deleteLargeTrips(data)));
   const [numberDay, setNumberDay] = React.useState(true);
   const [edgesFilter, setEdgesFilter] = React.useState([]);
   const [currentStation, setCurrentStation] = React.useState([]);
   const [searchedStation, setsearchedStation] = React.useState("");
-  const [genders, setGenders] = React.useState(countGender(data));
-  const [ages, setAges] = React.useState(countByAge(data));
-  
+  const [genders, setGenders] = React.useState(countGender(deleteLargeTrips(data)));
+  const [ages, setAges] = React.useState(countByAge(deleteLargeTrips(data)));
+
   React.useEffect(() => {
     const newData = filterByDay(data, numberDay);
     // console.log("newdata", newData);
@@ -66,17 +76,19 @@ const Citibike = () => {
     setDataMap(getPlaces(newData));
   }, [numberDay]);
   React.useEffect(() => {
-    if (month === 0) setData(data0);
-    if (month === 1) setData(data1);
-    if (month === 2) setData(data2);
+    if (month === 0) setData(deleteLargeTrips(data0));
+    if (month === 1) setData(deleteLargeTrips(data0));
+    if (month === 2) setData(deleteLargeTrips(data0));
   }, [month]);
   React.useEffect(() => {
+    // const new Data =
     setAverage(avergayByDayOfWeek(getAmmountByDay(data)));
     setAmmount(ds.createView().source(getAmmountByDay(data)));
     setGenders(countGender(data));
     setDataMap(getPlaces(data));
     setAges(countByAge(data));
-    
+    // console.log("large strip", deleteLargeTrips(data))
+    // console.log(deleteLargeTrips(data), data.length)
   }, [data]);
 
   function filterAmmout(e) {
@@ -135,6 +147,10 @@ const Citibike = () => {
           datos pueden provocar que las graficas no se vean correctamente.
         </li>
 
+        <li>
+          Se puede subir datos de otras fechas siempre y cuando el archivo tenga el formato correspondiente  y tenga extensión json
+
+        </li>
         {/* <h3>To do</h3>
         <li>
           To do: Filtrar en la grafica tripduration las estaciones con un
@@ -151,17 +167,50 @@ const Citibike = () => {
           que tomaron el servicio desde ahí
         </li> */}
       </ul>
-      <Select style={{ width: "100px" }}  defaultValue={0} onChange={(e) => setMonth(e)}>
-        <Select.Option key={0} value={0}>
-          2019-10
-        </Select.Option>
-        <Select.Option key={1} value={1}>
-          2019-11
-        </Select.Option>
-        <Select.Option key={2} value={2}>
-          2020-03
-        </Select.Option>
-      </Select>
+      <Row>
+        <Col span={12}>
+          <Select
+            style={{ width: "100px" }}
+            defaultValue={0}
+            onChange={(e) => setMonth(e)}
+          >
+            <Select.Option key={0} value={0}>
+              2020-03
+            </Select.Option>
+            <Select.Option key={1} value={1}>
+              2020-03
+            </Select.Option>
+            <Select.Option key={2} value={2}>
+              2020-03
+            </Select.Option>
+          </Select>
+        </Col>
+        <Col span={12}>
+          <Upload
+            accept=".json"
+            showUploadList={true}
+            beforeUpload={(file) => {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                console.log("before upload", JSON.parse(e.target.result));
+                const dataFile = JSON.parse(e.target.result);
+
+                message.success("Se han cargado los datos exitosamente");
+                setData(deleteLargeTrips(dataFile));
+              };
+              reader.readAsText(file);
+
+              // Prevent upload
+              return false;
+            }}
+          >
+            <Button icon={<UploadOutlined />} shape="round">
+              Subir datos (formato .json)
+            </Button>
+          </Upload>
+        </Col>
+      </Row>
+      <Divider type="vertical" />
       <Row gutter={[15, 15]}>
         <Col span="7">
           <Rose data={average} filter={filterAmmout} />
@@ -225,7 +274,7 @@ const Citibike = () => {
         </Select>
       )}
       <Row gutter={[10, 10]}>
-        <Col span="14">
+        <Col span="24">
           <Card bodyStyle={{ minHeight: 300 }}>
             <Map
               places={dataMap.placeArray}
@@ -235,23 +284,32 @@ const Citibike = () => {
               searchedStation={searchedStation}
             />
           </Card>
-          <Card title={`Duración de viaje promedio de ${currentStation} y otras estaciones` } bodyStyle={{ minHeight: 300 }}>
+        </Col>
+      </Row>
+      <Row gutter={[10, 10]}>
+        <Col span={8}>
+          <Card
+            title={`Duración de viaje promedio de ${currentStation} y otras estaciones`}
+            bodyStyle={{ minHeight: 300 }}
+          >
             <TripDurationChart
               data={formatArray(edgesFilter, currentStation)}
             />
           </Card>
         </Col>
-        <Col span="10">
-          <Card bodyStyle={{ minHeight: 300 }} size="small">
-            <HorizontalBar data={formatArray(edgesFilter, currentStation)} />
-          </Card>
-          <Card>
+        <Col span={8}>
+          <Card
+            title={`Duración de viaje vs cantidad de viajes`}
+            bodyStyle={{ minHeight: 300 }}
+          >
             <Scatter dataProp={formatArray(edgesFilter, currentStation)} />
           </Card>
         </Col>
-      </Row>
-      <Row gutter={[10, 10]}>
-        <Col span="16"></Col>
+        <Col span={8}>
+          <Card title="Cantidad de recorridos" bodyStyle={{ minHeight: 300 }}>
+            <HorizontalBar data={formatArray(edgesFilter, currentStation)} />
+          </Card>
+        </Col>
       </Row>
     </div>
   );
