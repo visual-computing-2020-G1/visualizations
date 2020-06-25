@@ -1,3 +1,40 @@
+import moment from 'moment';
+
+export function getTimesLabel(time = 61){
+  /**
+   * @param time is a minut input for a range
+   */
+  const sample2  = "2020-03-01 00:00:00"
+  // //console.log("moment", moment(sample2))
+  // //console.log("moment", moment(sample2).add(60*15, "minutes").format("HH:mm"))
+  // //console.log("moment m ", moment(sample2).add(60*15, "minutes").format("m"))
+  // //console.log("minutes", newTime.getMinutes())
+  // const newTime = new Date("2020-03-01 00:14:07.0000")
+  // //console.log(newTime.getHours())
+  let timeArray = []
+  let acumulate = []
+  for(let i = 0; i < 24*60/time; i++){
+    const range = moment(sample2).add(time*i, "minutes").format("HH:mm")
+    timeArray.push(range)
+    acumulate.push(0)
+  }
+  return {labels: timeArray, acumulate: acumulate}
+}
+export function setIntervalMinutes(data, minutes){
+  const {labels, acumulate} = getTimesLabel(minutes)
+    data.forEach(element =>{
+      
+        const init = element.starttime
+        const newTime = new Date(init)
+        const total = newTime.getHours()*60 + newTime.getMinutes() 
+        const position = parseInt(total/minutes)
+        acumulate[position] +=1
+  })
+  for(let i  = 0 ; i < acumulate.length; i++){
+    acumulate[i]={time: labels[i], value: acumulate[i]}
+  } 
+  return acumulate
+}
 
 export function deleteLargeTrips(data, minuts = 180 ){
   let newData = []
@@ -134,7 +171,7 @@ export function getPlaces(data) {
       };
     }
   });
-  // console.log("dictEdges", dictEdges);
+  // //console.log("dictEdges", dictEdges);
   // data.forEach( record =>{
   //   const nameStart = record["start station name"];
   //   const nameEnd = record["end station name"];
@@ -179,7 +216,7 @@ export function getPlaces(data) {
       endToStartDuration: endDuration,
     });
   }
-  // console.log("edges", edges);
+  // //console.log("edges", edges);
   let placeArray = [];
   let i = 0;
   for (let namePlace in places) {
@@ -216,7 +253,7 @@ export function formatArray(data, currentStation) {
           startToEndDuration: obj.endToStartDuration,
         });
   });
-  // console.log("newData", newData);
+  // //console.log("newData", newData);
   return newData;
 }
 

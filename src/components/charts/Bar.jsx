@@ -32,7 +32,7 @@ const Bar = ({ data, day, setNumberDay }) => {
           padding={30}
           forceFit
           onClick={(e) => {
-            console.log(e)
+            //console.log(e)
             if (e.data !== undefined && e.data !== null && e.data.data.day !== undefined) {
               setNumberDay(parseInt(e.data.data.day));
             }

@@ -6,7 +6,7 @@ import { Typography, Badge, Divider } from "antd";
 function scatterFormat(data) {
   let newDataSourceTarget = [];
   let newDataTargetSource = [];
-  console.log("scatter format:", data);
+  //console.log("scatter format:", data);
   data.forEach((record) => {
     newDataSourceTarget.push({
       target: ` ${record.startName}->${record.endName}`,
@@ -29,9 +29,9 @@ function scatterFormat(data) {
   return { st: newDataSourceTarget, ts: newDataTargetSource };
 }
 function Scatter({ dataProp }) {
-  console.log("dataprop", dataProp);
+  //console.log("dataprop", dataProp);
   const newData = scatterFormat(dataProp);
-  console.log(newData);
+  //console.log(newData);
   return (
     <React.Fragment>
       {newData.st.length > 0 && (
@@ -51,9 +51,9 @@ function Scatter({ dataProp }) {
           />
           <Tooltip title="Tiempo de recorrido">
             {(title, items, target) => {
-              console.log("items", items);
-              console.log("title", title);
-              console.log("target", target);
+              //console.log("items", items);
+              //console.log("title", title);
+              //console.log("target", target);
               // items 是个数组，即被触发tooltip的数据。
               // 获取items的颜色
               const color = items[0].color;

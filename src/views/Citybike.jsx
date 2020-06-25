@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import {
   Row,
   Col,
@@ -9,6 +9,7 @@ import {
   Upload,
   Button,
   message,
+  InputNumber,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import {
@@ -20,9 +21,10 @@ import {
   filterByDay,
   countGender,
   countByAge,
+  setIntervalMinutes,
 } from "../utils";
 // import data from "../data/citybike/bike_2020_03-.json";
-// import data from "../data/citybike/bike_2019_10.json";
+// import data from "../data/citybike/bike_2019_30.json";
 import data0 from "../data/citybike/bike_2020_03-.json";
 
 import BarChart from "../components/charts/Bar";
@@ -32,6 +34,7 @@ import Rose from "../components/charts/Rose";
 import Scatter from "../components/charts/ScatterChart";
 import Map from "../components/charts/map/Map";
 import TripDurationChart from "../components/charts/TripDurationChart";
+import IntervalTime from "../components/charts/IntervalTime";
 // // import MapBox from "../components/charts/map/MapBox";
 import DataSet from "@antv/data-set";
 
@@ -60,20 +63,26 @@ const Citibike = () => {
   function resetBar() {
     setAmmount(ds.createView().source(getAmmountByDay(deleteLargeTrips(data))));
   }
-  const [dataMap, setDataMap] = React.useState(getPlaces(deleteLargeTrips(data)));
+  const [dataMap, setDataMap] = React.useState(
+    getPlaces(deleteLargeTrips(data))
+  );
   const [numberDay, setNumberDay] = React.useState(true);
   const [edgesFilter, setEdgesFilter] = React.useState([]);
   const [currentStation, setCurrentStation] = React.useState([]);
   const [searchedStation, setsearchedStation] = React.useState("");
-  const [genders, setGenders] = React.useState(countGender(deleteLargeTrips(data)));
+  const [genders, setGenders] = React.useState(
+    countGender(deleteLargeTrips(data))
+  );
   const [ages, setAges] = React.useState(countByAge(deleteLargeTrips(data)));
-
+  const [intervals, setIntervals] = React.useState([]);
+  const [binTime, setBinTime] = React.useState(60);
   React.useEffect(() => {
     const newData = filterByDay(data, numberDay);
-    // console.log("newdata", newData);
+    // //console.log("newdata", newData);
     setGenders(countGender(newData));
     setAges(countByAge(newData));
     setDataMap(getPlaces(newData));
+    setIntervals(setIntervalMinutes(newData, binTime));
   }, [numberDay]);
   React.useEffect(() => {
     if (month === 0) setData(deleteLargeTrips(data0));
@@ -87,10 +96,10 @@ const Citibike = () => {
     setGenders(countGender(data));
     setDataMap(getPlaces(data));
     setAges(countByAge(data));
-    // console.log("large strip", deleteLargeTrips(data))
-    // console.log(deleteLargeTrips(data), data.length)
+    setIntervals(setIntervalMinutes(data, binTime));
+    // //console.log("large strip", deleteLargeTrips(data))
+    // //console.log(deleteLargeTrips(data), data.length)
   }, [data]);
-
   function filterAmmout(e) {
     if (e.data === null || e.data === undefined) {
       resetBar();
@@ -109,7 +118,7 @@ const Citibike = () => {
       }
     }
   }
-  // console.log(getPlaces(data))
+  // //console.log(getPlaces(data))
   return (
     <div>
       <h3>Instrucciones</h3>
@@ -148,8 +157,8 @@ const Citibike = () => {
         </li>
 
         <li>
-          Se puede subir datos de otras fechas siempre y cuando el archivo tenga el formato correspondiente  y tenga extensión json
-
+          Se puede subir datos de otras fechas siempre y cuando el archivo tenga
+          el formato correspondiente y tenga extensión json
         </li>
         {/* <h3>To do</h3>
         <li>
@@ -170,7 +179,7 @@ const Citibike = () => {
       <Row>
         <Col span={12}>
           <Select
-            style={{ width: "100px" }}
+            style={{ width: "300px" }}
             defaultValue={0}
             onChange={(e) => setMonth(e)}
           >
@@ -192,7 +201,7 @@ const Citibike = () => {
             beforeUpload={(file) => {
               const reader = new FileReader();
               reader.onload = (e) => {
-                console.log("before upload", JSON.parse(e.target.result));
+                //console.log("before upload", JSON.parse(e.target.result));
                 const dataFile = JSON.parse(e.target.result);
 
                 message.success("Se han cargado los datos exitosamente");
@@ -249,16 +258,36 @@ const Citibike = () => {
               </Card>
             </Col>
           </Row>
-
+            
           <Card style={{ minHeight: 150 }}>
             <SmallChart data={ages} />
+          </Card>
+        </Col>
+      </Row>
+      <Row gutter={[15, 15]}>
+        <Col span={24}>
+        <InputNumber
+              min={1}
+              max={60 * 3}
+              onChange={(e) => e > 0 && e < 240 && setBinTime(e)}
+              defaultValue={60}
+              style={{width:300}}
+            />
+            <Button block type="primary" onClick={
+              e=>{
+                const newData = filterByDay(data, numberDay);
+                setIntervals(setIntervalMinutes(newData, binTime));
+              }
+            }>Actualizar</Button>
+          <Card>
+            {intervals.length > 0 && <IntervalTime data={intervals} />}
           </Card>
         </Col>
       </Row>
       {dataMap.placeArray && (
         <Select
           allowClear
-          style={{ width: "100%" }}
+          style={{ width: "300%" }}
           placeholder="Please select a station"
           showSearch
           onChange={(e) => setsearchedStation(parseInt(e))}
@@ -273,7 +302,7 @@ const Citibike = () => {
           ))}
         </Select>
       )}
-      <Row gutter={[10, 10]}>
+      <Row gutter={[30, 30]}>
         <Col span="24">
           <Card bodyStyle={{ minHeight: 300 }}>
             <Map
@@ -286,7 +315,7 @@ const Citibike = () => {
           </Card>
         </Col>
       </Row>
-      <Row gutter={[10, 10]}>
+      <Row gutter={[30, 30]}>
         <Col span={8}>
           <Card
             title={`Duración de viaje promedio de ${currentStation} y otras estaciones`}
@@ -314,4 +343,7 @@ const Citibike = () => {
     </div>
   );
 };
-export default Citibike;
+export default memo(Citibike, (prev, next)=>{
+  console.log(prev,next)
+  return prev.binTime === next.binTime
+});

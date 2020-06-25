@@ -42,21 +42,21 @@ const MapScene = React.memo(function Map({
   setCurrentStation,
   searchedStation,
 }) {
-  // console.log(places);
+  // //console.log(places);
   const [popupInfoLine, setPopupInfoLine] = React.useState();
   const [popupInfo, setPopupInfo] = React.useState();
   const [filterLine, setFilterLine] = React.useState("");
   const [allLines, setAllLines] = React.useState(true);
   const [layer, setLayer] = React.useState();
   const [scene, setScene] = React.useState();
-  // console.log("places:" , places)
+  // //console.log("places:" , places)
 
   React.useEffect(() => {
     if (layer !== undefined) {
-      console.log("searchstation", searchedStation);
+      //console.log("searchstation", searchedStation);
        layer.setSelect(searchedStation);
        const coord =  layer.getEncodedData()[searchedStation].coordinates
-      //  console.log("encoded" , layer.getEncodedData())
+      //  //console.log("encoded" , layer.getEncodedData())
        scene.setZoomAndCenter(15, coord);
     }
   }, [searchedStation]);
@@ -70,7 +70,7 @@ const MapScene = React.memo(function Map({
     );
   }, [filterLine]);
   function showPopup(args) {
-    console.log(args);
+    //console.log(args);
     args.feature &&
       setPopupInfo({
         lnglat: args.lngLat,
@@ -80,7 +80,7 @@ const MapScene = React.memo(function Map({
     setFilterLine(args.feature.name);
   }
   function showPopupLine(args) {
-    console.log(args);
+    //console.log(args);
     args.feature &&
       setPopupInfoLine({
         lnglat: args.lngLat,

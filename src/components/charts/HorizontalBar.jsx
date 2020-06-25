@@ -55,7 +55,7 @@ class Stacked extends React.Component {
       value: "valor",
       retains: ["endName"],
     });
-    console.log(dv);
+    //console.log(dv);
     const dt = this.props.data;
     return (
       <div>
