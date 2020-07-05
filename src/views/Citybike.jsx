@@ -259,7 +259,7 @@ const Citibike = () => {
             </Col>
           </Row>
             
-          <Card style={{ minHeight: 150 }}>
+          <Card style={{ minHeight: 150 }} title="viajes por edad" size="small">
             <SmallChart data={ages} />
           </Card>
         </Col>
@@ -316,7 +316,7 @@ const Citibike = () => {
         </Col>
       </Row>
       <Row gutter={[30, 30]}>
-        <Col span={8}>
+        <Col span={24}>
           <Card
             title={`Duración de viaje promedio de ${currentStation} y otras estaciones`}
             bodyStyle={{ minHeight: 300 }}
@@ -326,7 +326,7 @@ const Citibike = () => {
             />
           </Card>
         </Col>
-        <Col span={8}>
+        <Col span={24}>
           <Card
             title={`Duración de viaje vs cantidad de viajes`}
             bodyStyle={{ minHeight: 300 }}
@@ -334,7 +334,7 @@ const Citibike = () => {
             <Scatter dataProp={formatArray(edgesFilter, currentStation)} />
           </Card>
         </Col>
-        <Col span={8}>
+        <Col span={24}>
           <Card title="Cantidad de recorridos" bodyStyle={{ minHeight: 300 }}>
             <HorizontalBar data={formatArray(edgesFilter, currentStation)} />
           </Card>

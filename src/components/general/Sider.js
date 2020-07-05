@@ -28,9 +28,9 @@ const customSider = ({ collapsed }) => {
             </span>
           </Link>
         </Menu.Item>
-        <Menu.Item key="3" icon={<UploadOutlined />}>
+        {/* <Menu.Item key="3" icon={<UploadOutlined />}>
           nav 3
-        </Menu.Item>
+        </Menu.Item> */}
       </Menu>
     </Sider>
   );
