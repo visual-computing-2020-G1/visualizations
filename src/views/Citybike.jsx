@@ -304,7 +304,7 @@ const Citibike = () => {
       )}
       <Row gutter={[30, 30]}>
         <Col span="24">
-          <Card bodyStyle={{ minHeight: 300 }}>
+          <Card bodyStyle={{ minHeight: 300 }} size="small" title=" Frecuencias de viajes entre estaciones">
             <Map
               places={dataMap.placeArray}
               lines={dataMap.edges}
