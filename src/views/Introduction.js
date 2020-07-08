@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Card, Typography, Table, Divider, List } from "antd";
-import {Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 const columns = [
   { title: "Nombre", dataIndex: "name", key: "name" },
   { title: "Tipo", dataIndex: "type", key: "type" },
@@ -160,13 +160,13 @@ const barData = [
       el mapa y las tarjetas que contiene la cantidad de personas por sexo.",
   },
   {
-    title: "Edad.",
+    title: "Edad",
     image: "/Barra2.PNG",
     content:
       "Se representa la cantidad de viajes dada la edad, esta  gráfica cambia cuando se selecciona una barra del grafico principal",
   },
   {
-    title: "Viaje por  minuto.",
+    title: "Viajes por x minutos  ",
     image: "/Barra3.PNG",
     content:
       "Representa la cantidad de viajes dada una frecuencia en minutos, esta frecuencia puede cambiar con el campo que se encuentra arriba \
@@ -215,9 +215,7 @@ const Introduction = () => {
   return (
     <Card bordered={false} style={{ textAlign: "center" }}>
       <Title>Dashboard CitiBike - COMPUTACIÓN VISUAL 2020-1</Title>
-
       <Divider orientation="left">Integrantes </Divider>
-
       <List
         size="small"
         // bordered
@@ -235,7 +233,6 @@ const Introduction = () => {
           </List.Item>
         )}
       />
-
       <Divider orientation="left">Introducción </Divider>
       <Paragraph style={{ textAlign: "left" }}>
         Citibike es un sistema inaugurado en el 2013, el sistema apoya el
@@ -250,11 +247,11 @@ const Introduction = () => {
           {" "}
           coursera tableau
         </a>
-        , estas paginas tienen como proposito mostrar las rutas más frecuentes,
+        , estas páginas tienen como propósito mostrar las rutas más frecuentes,
         viajes promedio por día , entre otra información que podria ser util a
         la hora de la toma de decisiones por parte de la empresa encargada, sin
-        embargo estas paginas tienen como defecto mostrar la información de un
-        periodo estatico, es decir, sin que el usuairo pueda interactuar en el
+        embargo estas páginas tienen como defecto mostrar la información de un
+        periodo estático, es decir, sin que el usuario pueda interactuar en el
         tiempo.
         <br />
         La pagina muestra la visualización de los datos del sistema de
@@ -274,7 +271,6 @@ const Introduction = () => {
           pagination={{ pageSize: 20 }}
         />
       </div>
-
       <Divider orientation="left">Objetivo </Divider>
       <Paragraph style={{ textAlign: "left" }}>
         <ul>
@@ -287,11 +283,9 @@ const Introduction = () => {
             decisiones
           </li>
           <li>Briandar una buena experiencia al usuario</li>
-          <li>
-            Brindar la posibilidad de analizar cualquier mes del dataset de
-            citibike sin necesidad de hacer cambios en el codigo fuente
-          </li>
-          <li>_</li>
+          <li>Brindar la posibilidad de analizar cualquier mes del dataset.</li>
+          <li>Encontrar formas creativas de visualizar los datos de tal manera que se aporte la mayor cantidad de información nueva que pueda ser útil.</li>
+          {/* <li>_</li> */}
         </ul>
         {/* -Mostrar información de manera interactiva que ofrece lo de tal manera que los usuarios puedan interpretar el estado del sistema en el mes o día deseado  */}
       </Paragraph>
@@ -328,10 +322,27 @@ const Introduction = () => {
           </List.Item>
         )}
       />
-
       <Divider orientation="left">Demo </Divider>
       Click <Link to="/citybike"> aquí</Link> para ir al dashboard.
       <Divider orientation="left">Conclusiones </Divider>
+      <ul style={{ textAlign: "left" }}>
+        <li>
+          Los conceptos aprendidos en computación visual amplian el horizonte de
+          posibilidades en cuanto a la forma en que pueden representarse
+          graficamente para su visulización y a la vez que brindan herramientas
+          para llevar a cabo su implementación.
+        </li>
+        <li>
+          La visualización de datos permite descubrir información relevante que
+          no es visible a partir del mero analisis de los datos en crudo.
+        </li>
+        <li>
+          La visualización de datos aporta en gran manera en los procesos de
+          toma de decisiones basados en el analisis de datos, ya que posibilita
+          darse que cuenta de hechos de los que no se era consciente aumentando
+          así el conocimiento de la situación.
+        </li>
+      </ul>
     </Card>
   );
 };

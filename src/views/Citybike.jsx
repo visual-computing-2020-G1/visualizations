@@ -279,7 +279,7 @@ const Citibike = () => {
                 setIntervals(setIntervalMinutes(newData, binTime));
               }
             }>Actualizar</Button>
-          <Card>
+          <Card size="small" title={`Cantidad de viajes cada ${binTime} minutos` } bordered>
             {intervals.length > 0 && <IntervalTime data={intervals} />}
           </Card>
         </Col>
