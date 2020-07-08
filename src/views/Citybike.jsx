@@ -258,7 +258,7 @@ const Citibike = () => {
               </Card>
             </Col>
           </Row>
-            
+
           <Card style={{ minHeight: 150 }} title="viajes por edad" size="small">
             <SmallChart data={ages} />
           </Card>
@@ -266,20 +266,28 @@ const Citibike = () => {
       </Row>
       <Row gutter={[15, 15]}>
         <Col span={24}>
-        <InputNumber
-              min={1}
-              max={60 * 3}
-              onChange={(e) => e > 0 && e < 240 && setBinTime(e)}
-              defaultValue={60}
-              style={{width:300}}
-            />
-            <Button block type="primary" onClick={
-              e=>{
-                const newData = filterByDay(data, numberDay);
-                setIntervals(setIntervalMinutes(newData, binTime));
-              }
-            }>Actualizar</Button>
-          <Card size="small" title={`Cantidad de viajes cada ${binTime} minutos` } bordered>
+          <InputNumber
+            min={1}
+            max={60 * 3}
+            onChange={(e) => e > 0 && e < 240 && setBinTime(e)}
+            defaultValue={60}
+            style={{ width: 300 }}
+          />
+          <Button
+            block
+            type="primary"
+            onClick={(e) => {
+              const newData = filterByDay(data, numberDay);
+              setIntervals(setIntervalMinutes(newData, binTime));
+            }}
+          >
+            Actualizar
+          </Button>
+          <Card
+            size="small"
+            title={`Cantidad de viajes cada ${binTime} minutos`}
+            bordered
+          >
             {intervals.length > 0 && <IntervalTime data={intervals} />}
           </Card>
         </Col>
@@ -304,14 +312,20 @@ const Citibike = () => {
       )}
       <Row gutter={[30, 30]}>
         <Col span="24">
-          <Card bodyStyle={{ minHeight: 300 }} size="small" title=" Frecuencias de viajes entre estaciones">
-            <Map
-              places={dataMap.placeArray}
-              lines={dataMap.edges}
-              edgeFilterProp={setEdgesFilter}
-              setCurrentStation={setCurrentStation}
-              searchedStation={searchedStation}
-            />
+          <Card size="small" title="Frecuencias de viajes entre estaciones">
+            <Card
+              bodyStyle={{ minHeight: 300 }}
+              size="small"
+              title="Frecuencias de viajes entre estaciones"
+            >
+              <Map
+                places={dataMap.placeArray}
+                lines={dataMap.edges}
+                edgeFilterProp={setEdgesFilter}
+                setCurrentStation={setCurrentStation}
+                searchedStation={searchedStation}
+              />
+            </Card>
           </Card>
         </Col>
       </Row>
